@@ -1,3 +1,6 @@
-az,sum,hrisi
-1,2,3
-aa,2,b
+az, sum, hrisi, myau,40
+-1, 2, 3.12,
+,,,
+,aa, +2
+10, "Hello world!", 123.56
+"\"Quoted\""
