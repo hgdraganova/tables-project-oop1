@@ -1,6 +1,6 @@
-az, sum, hrisi, myau,40
--1, 2, 3.12,
-,,,
-,aa, +2
-10, "Hello world!", 123.56
-"\"Quoted\""
+"az", "sum", "hrisi", "myau",40
+-1, 2, +3.12,,
+
+,"aa", +2,,
+10,, "Hello world!",, 123.56
+"\"Quoted\"", "C:\\temp\\", 123.123,,

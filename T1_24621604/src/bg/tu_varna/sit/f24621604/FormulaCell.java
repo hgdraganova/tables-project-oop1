@@ -10,4 +10,8 @@ public class FormulaCell implements Cell {
     public String getValue() {
         return formula;
     }
+
+    public double evaluate(Table table) {
+        return FormulaEvaluator.evaluate(this.formula, table);
+    }
 }

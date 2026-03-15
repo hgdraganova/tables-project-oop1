@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Table {
     private List<List<Cell>> data = new ArrayList<>();
+    private CellParser parser = new CellParser();
 
     public void clear() {
         data.clear();
@@ -18,23 +19,20 @@ public class Table {
         return data;
     }
 
-    public void print() {
-        int[] widths = getColumnWidths();
-        int cols = widths.length;
-
-        for (List<Cell> row : data) {
-            for (int c = 0; c < cols; c++) {
-                String text = "";
-
-                if (c < row.size()) {
-                    text = row.get(c).getValue();
-                }
-
-                System.out.print(padRight(text, widths[c]));
-                System.out.print(" | ");
-            }
-            System.out.println();
+    public void addParsedRow(String line, int rowIdx) {
+        String[] parts = line.split(",", -1);
+        List<Cell> row = new ArrayList<>();
+        for (int colIdx = 0; colIdx < parts.length; colIdx++) {
+            row.add(parser.parse(parts[colIdx], rowIdx, colIdx));
         }
+        addRow(row);
+    }
+
+    public String getCellValue(int row, int col) {
+        if (row < 0 || row >= data.size() || col < 0 || col >= data.get(row).size()) {
+            return "0";
+        }
+        return data.get(row).get(col).getValue();
     }
 
     public void edit(int row, int col, String value) {
@@ -42,45 +40,64 @@ public class Table {
             System.out.println("Invalid row.");
             return;
         }
-
         if (col < 0 || col >= data.get(row).size()) {
             System.out.println("Invalid column.");
             return;
         }
-
-        data.get(row).set(col, createCell(value));
-        System.out.println("Cell updated.");
+        try {
+            Cell newCell = parser.parse(value, row, col);
+            data.get(row).set(col, newCell);
+            System.out.println("Cell updated.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public Cell createCell(String text) {
-        text = text.replace("\\\"", "\"");
-
-        if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
-            text = text.substring(1, text.length() - 1);
-            return new StringCell(text);
+    private String formatResult(double result) {
+       if (result == (long) result) {
+            return String.format("%d", (long) result);
+        } else {
+            return String.valueOf(result);
         }
+    }
 
-        try {
-            return new IntCell(Integer.parseInt(text));
-        } catch (NumberFormatException ignored) {}
+    public void print() {
+        int[] widths = getColumnWidths();
+        int cols = widths.length;
 
-        try {
-            return new DoubleCell(Double.parseDouble(text));
-        } catch (NumberFormatException ignored) {}
+        for (List<Cell> row : data) {
+            for (int c = 0; c < cols; c++) {
+                String text;
+                if (c < row.size()) {
+                    Cell cell = row.get(c);
 
-        if (text.startsWith("=")) {
-            return new FormulaCell(text);
+                    if (cell instanceof FormulaCell) {
+                        try {
+                            double result = ((FormulaCell) cell).evaluate(this);
+                            text = formatResult(result);
+                        } catch (ArithmeticException | IllegalArgumentException e) {
+                            text = "ERROR";
+                        }
+                    }
+                    else {
+                        text = cell.getValue();
+                    }
+                }
+                else {
+                    text = "";
+                }
+
+                System.out.print(padRight(text, widths[c]));
+                if (c < cols - 1) System.out.print(" | ");
+            }
+            System.out.println();
         }
-
-        return new StringCell(text);
     }
 
     private int getMaxColumns() {
         int max = 0;
         for (List<Cell> row : data) {
-            if (row.size() > max) {
-                max = row.size();
-            }
+            if (row.size() > max) max = row.size();
         }
         return max;
     }
@@ -88,16 +105,12 @@ public class Table {
     private int[] getColumnWidths() {
         int cols = getMaxColumns();
         int[] widths = new int[cols];
-
         for (List<Cell> row : data) {
             for (int c = 0; c < row.size(); c++) {
                 int len = row.get(c).getValue().length();
-                if (len > widths[c]) {
-                    widths[c] = len;
-                }
+                if (len > widths[c]) widths[c] = len;
             }
         }
-
         return widths;
     }
 

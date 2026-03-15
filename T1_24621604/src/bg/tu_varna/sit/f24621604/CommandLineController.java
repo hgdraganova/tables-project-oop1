@@ -53,7 +53,7 @@ public class CommandLineController {
                     System.out.println("Exiting program...");
                     scanner.close();
                     return;
-                    
+
                 case "print":
                     if (!fileService.isFileOpened()) {
                         System.out.println("No file opened.");

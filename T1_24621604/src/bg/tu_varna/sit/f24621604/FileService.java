@@ -26,25 +26,23 @@ public class FileService {
             File file = new File(fileName);
             Scanner fileScanner = new Scanner(file);
             table.clear();
+            int rowIdx = 0;
 
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
-                String[] cells = line.split(",");
-
-                List<Cell> row = new ArrayList<>();
-                for (String cell : cells) {
-                    row.add(table.createCell(cell.trim()));
-                }
-                table.addRow(row);
+                table.addParsedRow(line, rowIdx);
+                rowIdx++;
             }
-
             fileScanner.close();
-            fileOpened = true;
-            openedFileName = file.getName();
-            System.out.println("Successfully opened file " + openedFileName);
 
+            this.fileOpened = true;
+            this.openedFileName = fileName;
+            System.out.println("Successfully opened file " + fileName);
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
+        } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
         }
     }
 
@@ -73,6 +71,7 @@ public class FileService {
             return;
         }
         writeToFile(newFileName, table);
+        this.openedFileName = newFileName;
         System.out.println("File saved successfully as " + newFileName);
     }
 
