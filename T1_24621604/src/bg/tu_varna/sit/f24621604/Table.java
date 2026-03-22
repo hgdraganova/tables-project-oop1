@@ -40,10 +40,16 @@ public class Table {
             System.out.println("Invalid row.");
             return;
         }
-        if (col < 0 || col >= data.get(row).size()) {
+
+        if (col < 0) {
             System.out.println("Invalid column.");
             return;
         }
+
+        while (col >= data.get(row).size()) {
+            data.get(row).add(new StringCell(""));
+        }
+
         try {
             Cell newCell = parser.parse(value, row, col);
             data.get(row).set(col, newCell);
