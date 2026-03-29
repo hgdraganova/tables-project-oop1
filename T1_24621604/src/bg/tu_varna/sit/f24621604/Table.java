@@ -6,6 +6,7 @@ import java.util.List;
 public class Table {
     private List<List<Cell>> data = new ArrayList<>();
     private CellParser parser = new CellParser();
+    private TablePrinter printer = new TablePrinter();
 
     public void clear() {
         data.clear();
@@ -29,14 +30,14 @@ public class Table {
     }
 
     public String getCellValue(int row, int col) {
-        if (row < 0 || row >= data.size() || col < 0 || col >= data.get(row).size()) {
+        if (!isValidCell(row, col)) {
             return "0";
         }
         return data.get(row).get(col).getValue();
     }
 
     public void edit(int row, int col, String value) {
-        if (row < 0 || row >= data.size()) {
+        if (!isValidRow(row)) {
             System.out.println("Invalid row.");
             return;
         }
@@ -46,9 +47,7 @@ public class Table {
             return;
         }
 
-        while (col >= data.get(row).size()) {
-            data.get(row).add(new StringCell(""));
-        }
+        ensureColumnExists(row, col);
 
         try {
             Cell newCell = parser.parse(value, row, col);
@@ -59,48 +58,11 @@ public class Table {
         }
     }
 
-    private String formatResult(double result) {
-       if (result == (long) result) {
-            return String.format("%d", (long) result);
-        } else {
-            return String.valueOf(result);
-        }
-    }
-
     public void print() {
-        int[] widths = getColumnWidths();
-        int cols = widths.length;
-
-        for (List<Cell> row : data) {
-            for (int c = 0; c < cols; c++) {
-                String text;
-                if (c < row.size()) {
-                    Cell cell = row.get(c);
-
-                    if (cell instanceof FormulaCell) {
-                        try {
-                            double result = ((FormulaCell) cell).evaluate(this);
-                            text = formatResult(result);
-                        } catch (ArithmeticException | IllegalArgumentException e) {
-                            text = "ERROR";
-                        }
-                    }
-                    else {
-                        text = cell.getValue();
-                    }
-                }
-                else {
-                    text = "";
-                }
-
-                System.out.print(padRight(text, widths[c]));
-                if (c < cols - 1) System.out.print(" | ");
-            }
-            System.out.println();
-        }
+        printer.print(this);
     }
 
-    private int getMaxColumns() {
+    public int getMaxColumns() {
         int max = 0;
         for (List<Cell> row : data) {
             if (row.size() > max) max = row.size();
@@ -108,23 +70,17 @@ public class Table {
         return max;
     }
 
-    private int[] getColumnWidths() {
-        int cols = getMaxColumns();
-        int[] widths = new int[cols];
-        for (List<Cell> row : data) {
-            for (int c = 0; c < row.size(); c++) {
-                int len = row.get(c).getValue().length();
-                if (len > widths[c]) widths[c] = len;
-            }
-        }
-        return widths;
+    private boolean isValidRow(int row) {
+        return row >= 0 && row < data.size();
     }
 
-    private String padRight(String text, int width) {
-        StringBuilder sb = new StringBuilder(text);
-        while (sb.length() < width) {
-            sb.append(' ');
+    private boolean isValidCell(int row, int col) {
+        return isValidRow(row) && col >= 0 && col < data.get(row).size();
+    }
+
+    private void ensureColumnExists(int row, int col) {
+        while (col >= data.get(row).size()) {
+            data.get(row).add(new StringCell(""));
         }
-        return sb.toString();
     }
 }
