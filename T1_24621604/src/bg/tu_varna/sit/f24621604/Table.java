@@ -5,8 +5,13 @@ import java.util.List;
 
 public class Table {
     private List<List<Cell>> data = new ArrayList<>();
-    private CellParser parser = new CellParser();
-    private TablePrinter printer = new TablePrinter();
+    private CellParser parser;
+    private TablePrinter printer;
+
+    public Table(CellParser parser, TablePrinter printer) {
+        this.parser = parser;
+        this.printer = printer;
+    }
 
     public void clear() {
         data.clear();
@@ -21,8 +26,11 @@ public class Table {
     }
 
     public void addParsedRow(String line, int rowIdx) {
+        parser.validateCommas(line, rowIdx);
+
         String[] parts = line.split(",", -1);
         List<Cell> row = new ArrayList<>();
+
         for (int colIdx = 0; colIdx < parts.length; colIdx++) {
             row.add(parser.parse(parts[colIdx], rowIdx, colIdx));
         }

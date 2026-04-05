@@ -4,35 +4,49 @@ public class CellParser {
     public Cell parse(String text, int row, int col) {
         text = text.trim();
 
-        if (text.startsWith("\"") && text.endsWith("\"") && text.length() >= 2) {
-            String content = text.substring(1, text.length() - 1);
-            String normalizedContent = content.replace("\\\"", "\"").replace("\\\\", "\\");
-            return new StringCell(normalizedContent);
-        }
-
         if (text.startsWith("=")) {
             return new FormulaCell(text);
         }
 
-        if (isNumeric(text)) {
-                boolean hasPlus = text.startsWith("+");
+        if (isString(text)) {
+            String content = text.substring(1, text.length() - 1)
+                    .replace("\\\"", "\"")
+                    .replace("\\\\", "\\");
+            return new StringCell(content);
+        }
 
-                if (text.contains(".")) {
-                    if (text.indexOf('.') != text.lastIndexOf('.')) {
-                        throw new IllegalArgumentException("Error: row " + (row + 1) + ", col " + (col + 1) + ", " + text + " is unknown data type");
-                }
-                return new DoubleCell(Double.parseDouble(text), hasPlus);
+        if (isDouble(text)) {
+            if (text.indexOf('.') != text.lastIndexOf('.')) {
+                throw new IllegalArgumentException("Error: row " + (row + 1) + ", col " + (col + 1) + ", " + text + " is unknown data type");
             }
-            else {
-                return new IntCell(Integer.parseInt(text), hasPlus);
-            }
+            boolean hasPlus = text.startsWith("+");
+            return new DoubleCell(Double.parseDouble(text), hasPlus);
+        }
+
+        if (isInt(text)) {
+            boolean hasPlus = text.startsWith("+");
+            return new IntCell(Integer.parseInt(text), hasPlus);
         }
 
         if (text.isEmpty()) {
             return new StringCell("");
         }
+
         throw new IllegalArgumentException("Error: row " + (row + 1) + ", col " + (col + 1) + ", " + text + " is unknown data type");
     }
+
+    private boolean isString(String text) {
+        return text.startsWith("\"") && text.endsWith("\"") && text.length() >= 2;
+    }
+
+    private boolean isDouble(String text) {
+        return isNumeric(text) && text.contains(".");
+    }
+
+    private boolean isInt(String text) {
+        return isNumeric(text) && !text.contains(".");
+    }
+
 
     private boolean isNumeric(String str) {
         if (str == null || str.isEmpty()) {
@@ -52,5 +66,42 @@ public class CellParser {
             }
         }
         return true;
+    }
+
+    public void validateCommas(String line, int rowIdx) {
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '"'  && (i == 0 || line.charAt(i - 1) != '\\')) {
+                if(!inQuotes) {
+                    int j = i - 1;
+                    while (j >= 0 && isSpace(line.charAt(j))) {
+                        j--;
+                    }
+
+                    if (j >= 0  && line.charAt(j) != ',') {
+                        throw new IllegalArgumentException("Error: row " + (rowIdx + 1) + ", missing comma after position " + (j + 1));
+                    }
+                }
+                inQuotes = !inQuotes;
+
+                if(!inQuotes) {
+                    int j = i + 1;
+                    while (j < line.length() && isSpace(line.charAt(j))) {
+                        j++;
+                    }
+
+                    if (j < line.length() && line.charAt(j) != ',') {
+                        throw new IllegalArgumentException("Error: row " + (rowIdx + 1) + ", missing comma after position " + (i + 1));
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isSpace(char c) {
+        return c == ' ' ||  c == '\t';
     }
 }

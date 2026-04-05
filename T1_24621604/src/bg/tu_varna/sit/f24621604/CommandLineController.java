@@ -3,8 +3,13 @@ package bg.tu_varna.sit.f24621604;
 import java.util.Scanner;
 
 public class CommandLineController {
-    private Table table = new Table();
-    private FileService fileService = new FileService();
+    private Table table;
+    private FileService fileService;
+
+    public CommandLineController(Table table, FileService fileService) {
+        this.table = table;
+        this.fileService = fileService;
+    }
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
