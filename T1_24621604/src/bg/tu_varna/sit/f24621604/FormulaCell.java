@@ -12,6 +12,6 @@ public class FormulaCell implements Cell {
     }
 
     public double evaluate(Table table) {
-        return FormulaEvaluator.evaluate(this.formula, table);
+        return table.getEvaluator().evaluate(this.formula, table);
     }
 }

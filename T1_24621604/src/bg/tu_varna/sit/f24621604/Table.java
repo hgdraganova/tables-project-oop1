@@ -7,10 +7,16 @@ public class Table {
     private List<List<Cell>> data = new ArrayList<>();
     private CellParser parser;
     private TablePrinter printer;
+    private FormulaEvaluator evaluator;
 
-    public Table(CellParser parser, TablePrinter printer) {
+    public Table(CellParser parser, TablePrinter printer, FormulaEvaluator evaluator) {
         this.parser = parser;
         this.printer = printer;
+        this.evaluator = evaluator;
+    }
+
+    public FormulaEvaluator getEvaluator() {
+        return evaluator;
     }
 
     public void clear() {

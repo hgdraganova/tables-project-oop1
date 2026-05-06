@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TablePrinter {
     private String formatResult(double result) {
-        if (result == (long) result) {
+        if (Math.floor(result) == result) {
             return String.format("%d", (long) result);
         } else {
             return String.valueOf(result);

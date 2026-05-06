@@ -23,12 +23,10 @@ public class FileStorage {
                 row++;
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
-            System.exit(1);
+            throw new TableLoadException("File not found.");
             //спиране на програмата при откриване на грешка във входните данни
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
+            throw new TableLoadException(e.getMessage());
             //спиране на програмата при откриване на грешка във входните данни
         } finally {
             if (scanner != null) {
