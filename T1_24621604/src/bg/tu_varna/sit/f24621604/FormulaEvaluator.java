@@ -23,7 +23,7 @@ public class FormulaEvaluator {
         operations.put("/", new Division());
         operations.put("\\^", new Power());
     }
-    
+
     /**
      * Evaluates a formula string.
      * Removes the leading '=' and determines if it is a simple value or expression.
