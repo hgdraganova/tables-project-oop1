@@ -1,4 +1,9 @@
 package bg.tu_varna.sit.f24621604;
+
+import bg.tu_varna.sit.f24621604.io.FileService;
+import bg.tu_varna.sit.f24621604.io.FileStorage;
+import bg.tu_varna.sit.f24621604.models.*;
+
 /**
  * Entry point of the application.
  * Initializes all core components and starts the command line interface.
@@ -29,9 +34,14 @@ public class Application {
         Table table = new Table(parser, printer, evaluator);
 
         /**
-         * Handles file operations (open, save, etc.)
+         * Low-level storage responsible for reading and writing files.
          */
-        FileService fileService = new FileService();
+        FileStorage storage = new FileStorage();
+        /**
+         * Service that manages file operations (open, save, close),
+         * using the provided FileStorage implementation.
+         */
+        FileService fileService = new FileService(storage);
 
         /**
          * Controls user input and executes commands
