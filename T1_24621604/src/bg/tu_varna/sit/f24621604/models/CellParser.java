@@ -40,7 +40,7 @@ public class CellParser {
             if (text.indexOf('.') != text.lastIndexOf('.')) {
                 throw new IllegalArgumentException("Error: row " + (row + 1) + ", col " + (col + 1) + ", " + text + " is unknown data type");
             }
-            boolean hasPlus = text.startsWith("+");
+            boolean hasPlus = text.startsWith("+"); //Проверка за +
             return new DoubleCell(Double.parseDouble(text), hasPlus);
         }
 

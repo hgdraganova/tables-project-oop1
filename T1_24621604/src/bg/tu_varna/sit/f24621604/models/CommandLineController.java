@@ -54,7 +54,8 @@ public class CommandLineController {
              * Splits input into at most 4 parts:
              * command + arguments (last part keeps remaining text)
              */
-            String[] parts = input.split(" ", 4); // разделя входа на максимум 4 части по интервал, като последната част запазва целия остатък (edit 1 2 "Hello world" - остатък)
+            String[] parts = input.split(" ", 4); // разделя входа на максимум 4 части по интервал,
+            // като последната част запазва целия остатък (edit 1 2 "Hello world" - остатък)
             /**
              * Extracts the command name
              */

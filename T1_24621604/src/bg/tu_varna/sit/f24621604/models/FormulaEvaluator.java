@@ -33,7 +33,7 @@ public class FormulaEvaluator {
         double left = getCellValueAsDouble(leftPart, table); //Превръщаме двете части в числа
         double right = getCellValueAsDouble(rightPart, table);
 
-        Operation operation = getOperation(operatorChar ); //взимаме самия оператор
+        Operation operation = getOperation(operatorChar); //взимаме самия оператор
 
         return operation.calculate(left, right); //връщаме изчисления резултат
     }
@@ -52,7 +52,7 @@ public class FormulaEvaluator {
             if (isOperator(c)) {
                 char prev = expression.charAt(i - 1); //Взимаме предишния символ
 
-                if (!isOperator(prev)) {
+                if (!isOperator(prev)) { //избягваме, пример: +- хващаме +, не и -
                     return i; //Връщаме позицията на оператора
                 }
             }
@@ -134,7 +134,7 @@ public class FormulaEvaluator {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            return 0.0;
+            return 0.0; //при формули като =R1C1*2 (празно/текст -> 0)
         }
     }
 }

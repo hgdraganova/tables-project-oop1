@@ -34,11 +34,11 @@ public class Validator {
      */
     public void validate() {
         for (int i = 0; i < line.length(); i++) {
-            if (isUnescapedQuote(i)) {
-                handleQuoteFound(i);
-                inQuotes = !inQuotes;
+            if (isUnescapedQuote(i)) { //"text; text"; "text1""text2"
+                handleQuoteFound(i); //12"text"; "text"12
+                inQuotes = !inQuotes; //превключваме състояние - извън низ <-> вътре в низ
             } else if (!inQuotes) {
-                validateNumericSpacing(i);
+                validateNumericSpacing(i); //12 34
             }
         }
     }
@@ -52,6 +52,7 @@ public class Validator {
     private boolean isUnescapedQuote(int index) {
         char c = line.charAt(index);
         return c == '"' && (index == 0 || line.charAt(index - 1) != '\\');
+        //true - не е escape-ната, ако текущият символ е ", която или е на първа позиция, или пред нея няма \
     }
 
     /**
@@ -60,10 +61,10 @@ public class Validator {
      * @param index position of the quote
      */
     private void handleQuoteFound(int index) {
-        if (!inQuotes) {
-            checkCommaBefore(index);
-        } else {
-            checkCommaAfter(index);
+        if (!inQuotes) { //влизаме в низ
+            checkCommaBefore(index); //проверка преди "
+        } else { //излизаме от низ
+            checkCommaAfter(index); //проверка след "
         }
     }
 
@@ -73,9 +74,9 @@ public class Validator {
      * @param index position of the quote
      */
     private void checkCommaBefore(int index) {
-        int j = skipSpacesBackwards(index - 1);
+        int j = skipSpacesBackwards(index - 1); //преди отваряща "
         if (j >= 0 && line.charAt(j) != ',') {
-            throwError(j + 1);
+            throwError(j + 1); //12"text" или "text1""text2"
         }
     }
 
@@ -85,9 +86,9 @@ public class Validator {
      * @param index position of the quote
      */
     private void checkCommaAfter(int index) {
-        int j = skipSpacesForward(index + 1);
+        int j = skipSpacesForward(index + 1); //след затваряща "
         if (j < line.length() && line.charAt(j) != ',') {
-            throwError(index + 1);
+            throwError(index + 1); //"text"12 или "text1""text2"
         }
     }
 
@@ -99,11 +100,12 @@ public class Validator {
     private void validateNumericSpacing(int i) {
         char current = line.charAt(i);
 
-        if (i + 1 < line.length() && isNumericChar(current)) {
+        if (i + 1 < line.length() && isNumericChar(current)) { //дали текущия символ не е последен и е число
             int nextIdx = skipSpacesForward(i + 1); // от следващия символ и прескача всички интервали
 
             if (nextIdx < line.length() && isNumericChar(line.charAt(nextIdx)) && nextIdx > i + 1) {
-                throwError(i + 1);
+                //дали не сме излезли от низа, има още едно число след " ", поне 1 " " между i и текущия
+                throwError(i + 1); //12 34
             }
         }
     }
@@ -118,7 +120,7 @@ public class Validator {
         while (index < line.length() && isSpace(line.charAt(index))) {
             index++;
         }
-        return index;
+        return index; //прескачаме всички " " напред и връщаме първия неинтервален индекс
     }
 
     /**
@@ -131,7 +133,7 @@ public class Validator {
         while (index >= 0 && isSpace(line.charAt(index))) {
             index--;
         }
-        return index;
+        return index; //прескачаме всички " " назад и връщаме първия неинтервален индекс
     }
 
     /**

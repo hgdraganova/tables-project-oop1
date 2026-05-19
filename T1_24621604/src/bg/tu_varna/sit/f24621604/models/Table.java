@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Table {
     /** Stores the table data as a list of rows */
-    private List<List<Cell>> data = new ArrayList<>();
+    private List<List<Cell>> data;
     /** Responsible for parsing string values into Cell objects */
     private CellParser parser;
     /** Responsible for printing the table */
@@ -30,6 +30,7 @@ public class Table {
         this.parser = parser;
         this.printer = printer;
         this.evaluator = evaluator;
+        this.data = new ArrayList<>();
     }
 
     /**
@@ -38,7 +39,7 @@ public class Table {
      * @return list of rows
      */
     public List<List<Cell>> getData() {
-        return new ArrayList<>(data);
+        return data;
     }
 
     /**
@@ -76,7 +77,7 @@ public class Table {
     public void addParsedRow(String line, int rowIdx) {
         parser.validateCommas(line, rowIdx);
 
-        String[] parts = line.split(",", -1); //-1 пази празни клетки в края
+        String[] parts = line.split(",", -1); //-1 пази празни клетки в края - ("a,b," → ["a","b",""])
         List<Cell> row = new ArrayList<>();
 
         for (int colIdx = 0; colIdx < parts.length; colIdx++) {

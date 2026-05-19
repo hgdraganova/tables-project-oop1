@@ -42,7 +42,7 @@ public class TablePrinter {
      */
     private String formatResult(double result) {
         if (Math.floor(result) == result) { //дали числото е цяло
-            return String.format("%d", (long) result); //махаме .0 -> цяло число(long няма дробна част)
+            return String.valueOf((long) result); //махаме .0 -> цяло число(long няма дробна част)
         } else {
             return String.valueOf(result);
         }

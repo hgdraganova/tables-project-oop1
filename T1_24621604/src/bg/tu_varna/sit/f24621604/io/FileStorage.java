@@ -24,7 +24,7 @@ public class FileStorage {
     public void read(String fileName, Table table) {
         Scanner scanner = null;
         try {
-            File file = new File(fileName);
+            File file = new File(fileName); //създава обект за файл - връзка към файла с това име
 
             /**
              * If file does not exist, create empty table (logical behavior)
@@ -34,7 +34,7 @@ public class FileStorage {
                 return;
             }
 
-            scanner  = new Scanner(file);
+            scanner  = new Scanner(file); //отваря файла и позволява да го четеш
 
             table.clear();
             /**
@@ -45,7 +45,7 @@ public class FileStorage {
             /**
              * Reads file line by line and parses each row
              */
-            while (scanner .hasNextLine()) {
+            while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 table.addParsedRow(line, row);
                 row++;
@@ -91,7 +91,7 @@ public class FileStorage {
                     /**
                      * Adds comma between values (but not after last one)
                      */
-                    if (i < row.size() - 1) writer.write(",");
+                    if (i < row.size() - 1) writer.write(","); //не слагаме , след последния символ
                 }
                 /**
                  * New line after each row

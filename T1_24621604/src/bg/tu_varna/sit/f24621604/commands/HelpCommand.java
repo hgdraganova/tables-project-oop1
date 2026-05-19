@@ -28,7 +28,7 @@ public class HelpCommand extends Command {
     public void execute() {
         System.out.println("The following commands are supported:");
         for (Command cmd : commands.values()) {
-            System.out.printf("%-25s %s%n", cmd.getUsage(), cmd.getDescription());
+            System.out.printf("%-25s %s%n", cmd.getUsage(), cmd.getDescription()); //- ляво подравняване, 25 ширина, str1, str2, \n
         }
     }
 }
