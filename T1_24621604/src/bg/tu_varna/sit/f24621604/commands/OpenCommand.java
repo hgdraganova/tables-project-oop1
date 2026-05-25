@@ -35,7 +35,7 @@ public class OpenCommand extends Command {
     @Override
     public void execute() {
         if (getArgs().length < 2) {
-            System.out.println("Please provide file name.");
+            throw new IllegalArgumentException("Please provide file name.");
         } else {
             fileService.open(getArgs()[1], table);
         }

@@ -3,7 +3,6 @@ package bg.tu_varna.sit.f24621604.models;
 import bg.tu_varna.sit.f24621604.cells.FormulaCell;
 import bg.tu_varna.sit.f24621604.contracts.Cell;
 
-import java.util.List;
 /**
  * Class responsible for printing a table in a formatted way.
  * It aligns columns based on the longest cell in each column
@@ -20,7 +19,7 @@ public class TablePrinter {
         int[] widths = getColumnWidths(table);
         int cols = widths.length;
 
-        for (List<Cell> row : table.getData()) {
+        for (Column row : table.getData()) {
             for (int c = 0; c < cols; c++) {
                 String text = resolveCellText(table, row, c);
 
@@ -48,19 +47,12 @@ public class TablePrinter {
         }
     }
 
-    /**
-     * Calculates the maximum width of each column.
-     *
-     * @param table the table
-     * @return array of column widths
-     */
-
     private int[] getColumnWidths(Table table) {
         int cols = table.getMaxColumns();
         int[] widths = new int[cols];
 
-        for (List<Cell> row : table.getData()) { //обхождане редовете
-            for (int c = 0; c < cols; c++) { //обхождане колоните
+        for (Column row : table.getData()) {
+            for (int c = 0; c < cols; c++) {
                 String text = resolveCellText(table, row, c); //взима текста
                 int len = text.length();
 
@@ -97,7 +89,7 @@ public class TablePrinter {
      * @param col the column index
      * @return string representation of the cell
      */
-    private String resolveCellText(Table table, List<Cell> row, int col) {
+    private String resolveCellText(Table table, Column row, int col) {
         if (col >= row.size()) {
             return "";
         }

@@ -35,7 +35,7 @@ public class PrintCommand extends Command {
     @Override
     public void execute() {
         if (!fileService.isFileOpened()) {
-            System.out.println("No file opened.");
+            throw new IllegalStateException("No file opened.");
         } else {
             table.print();
         }

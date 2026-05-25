@@ -5,6 +5,9 @@ import bg.tu_varna.sit.f24621604.models.Table;
 
 /**
  * Command used to save the currently opened file.
+ * Supports both:
+ * - save
+ * - save as <file>
  */
 public class SaveCommand extends Command {
     /**
@@ -23,7 +26,7 @@ public class SaveCommand extends Command {
      * @param table the table to save
      */
     public SaveCommand(FileService fileService, Table table) {
-        super("save", "save","\tsaves the currently opened file");
+        super("save", "save [as <file>]","\tsaves the currently opened file or saves as <file>");
         this.fileService = fileService;
         this.table = table;
     }
@@ -34,6 +37,16 @@ public class SaveCommand extends Command {
      */
     @Override
     public void execute() {
-        fileService.save(table);
+        String[] args = getArgs();
+        if (args.length == 1) {
+            fileService.save(table);
+            return;
+        }
+
+        if (args.length >= 3 && "as".equals(args[1])) {
+            fileService.saveAs(args[2], table);
+            return;
+        }
+        throw new IllegalArgumentException("Usage: save [as <file>]");
     }
 }

@@ -1,6 +1,5 @@
 package bg.tu_varna.sit.f24621604.models;
 
-import bg.tu_varna.sit.f24621604.cells.StringCell;
 import bg.tu_varna.sit.f24621604.contracts.Cell;
 
 import java.util.ArrayList;
@@ -10,8 +9,8 @@ import java.util.List;
  * Supports operations such as loading data, editing cells, and printing.
  */
 public class Table {
-    /** Stores the table data as a list of rows */
-    private List<List<Cell>> data;
+    /** Stores the table data as a list of column containers */
+    private List<Column> data;
     /** Responsible for parsing string values into Cell objects */
     private CellParser parser;
     /** Responsible for printing the table */
@@ -36,9 +35,9 @@ public class Table {
     /**
      * Returns the table data.
      *
-     * @return list of rows
+     * @return list of column containers
      */
-    public List<List<Cell>> getData() {
+    public List<Column> getData() {
         return data;
     }
 
@@ -47,7 +46,6 @@ public class Table {
      *
      * @return evaluator instance
      */
-
     public FormulaEvaluator getEvaluator() {
         return evaluator;
     }
@@ -65,7 +63,7 @@ public class Table {
      * @param row list of cells representing a row
      */
     public void addRow(List<Cell> row) {
-        data.add(row);
+        data.add(new Column(row));
     }
 
     /**
@@ -109,12 +107,10 @@ public class Table {
      */
     public void edit(int row, int col, String value) {
         if (!isValidRow(row)) {
-            System.out.println("Invalid row.");
-            return;
+            throw new IllegalArgumentException("Invalid row.");
         }
         if (col < 0) {
-            System.out.println("Invalid column.");
-            return;
+            throw new IllegalArgumentException("Invalid column.");
         }
         ensureColumnExists(row, col);
 
@@ -123,7 +119,7 @@ public class Table {
             data.get(row).set(col, newCell);
             System.out.println("Cell updated.");
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -141,7 +137,7 @@ public class Table {
      */
     public int getMaxColumns() {
         int max = 0;
-        for (List<Cell> row : data) {
+        for (Column row : data) {
             if (row.size() > max) {
                 max = row.size();
             }
@@ -178,8 +174,6 @@ public class Table {
      * @param col column index
      */
     private void ensureColumnExists(int row, int col) {
-        while (col >= data.get(row).size()) {
-            data.get(row).add(new StringCell(""));
-        }
+        data.get(row).ensureCellExists(col);
     }
 }

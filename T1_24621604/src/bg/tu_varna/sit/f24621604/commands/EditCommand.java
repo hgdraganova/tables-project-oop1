@@ -35,13 +35,11 @@ public class EditCommand extends Command {
     @Override
     public void execute() {
         if (!fileService.isFileOpened()) {
-            System.out.println("No file opened.");
-            return;
+            throw new IllegalStateException("No file opened.");
         }
 
         if (getArgs().length < 4) {
-            System.out.println("Usage: edit <row> <col> <value>");
-            return;
+            throw new IllegalArgumentException("Usage: edit <row> <col> <value>");
         }
 
         try {
@@ -60,7 +58,7 @@ public class EditCommand extends Command {
 
             table.edit(row, col, value);
         } catch (NumberFormatException e) {
-            System.out.println("Row and column must be numbers.");
+            throw new IllegalArgumentException("Row and column must be numbers.");
         }
     }
 }

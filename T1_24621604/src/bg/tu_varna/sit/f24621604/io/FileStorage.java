@@ -1,14 +1,14 @@
 package bg.tu_varna.sit.f24621604.io;
 
-import bg.tu_varna.sit.f24621604.models.Table;
 import bg.tu_varna.sit.f24621604.contracts.Cell;
+import bg.tu_varna.sit.f24621604.models.Column;
+import bg.tu_varna.sit.f24621604.models.Table;
 import bg.tu_varna.sit.f24621604.validation.TableLoadException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 /**
  * Handles low-level file operations such as reading from and writing to files.
@@ -85,9 +85,10 @@ public class FileStorage {
             /**
              * Iterates through all rows and cells and writes them in CSV format
              */
-            for (List<Cell> row : table.getData()) {
+            for (Column row : table.getData()) {
                 for (int i = 0; i < row.size(); i++) {
-                    writer.write(row.get(i).getValue());
+                    Cell cell = row.get(i);
+                    writer.write(cell.getValue());
                     /**
                      * Adds comma between values (but not after last one)
                      */

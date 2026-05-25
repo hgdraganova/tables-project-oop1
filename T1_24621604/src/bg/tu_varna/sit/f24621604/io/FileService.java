@@ -47,8 +47,7 @@ public class FileService {
      */
     public void open(String fileName, Table table) {
         if (fileOpened) {
-            System.out.println("File already opened.");
-            return;
+            throw new IllegalStateException("File already opened.");
         }
         fileStorage.read(fileName, table);
         fileOpened = true;
@@ -61,8 +60,7 @@ public class FileService {
      */
     public void close() {
         if (!fileOpened) {
-            System.out.println("No file is currently open.");
-            return;
+            throw new IllegalStateException("No file is currently open.");
         }
         System.out.println("Successfully closed file " + openedFileName);
         fileOpened = false;
@@ -76,11 +74,10 @@ public class FileService {
      */
     public void save(Table table) {
         if (!fileOpened) {
-            System.out.println("No file is currently open.");
-            return;
+            throw new IllegalStateException("No file is currently open.");
         }
         fileStorage.write(openedFileName, table);
-        System.out.println("Successfully saved file." + openedFileName);
+        System.out.println("Successfully saved file " + openedFileName);
     }
 
     /**
@@ -91,8 +88,7 @@ public class FileService {
      */
     public void saveAs(String newFileName, Table table) {
         if (!fileOpened) {
-            System.out.println("No file is currently open.");
-            return;
+            throw new IllegalStateException("No file is currently open.");
         }
         fileStorage.write(newFileName, table);
         openedFileName = newFileName;

@@ -2,6 +2,7 @@ package bg.tu_varna.sit.f24621604.models;
 
 import bg.tu_varna.sit.f24621604.commands.*;
 import bg.tu_varna.sit.f24621604.io.FileService;
+import bg.tu_varna.sit.f24621604.validation.TableLoadException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +27,6 @@ public class CommandLineController {
         commands.put("open", new OpenCommand(fileService, table));
         commands.put("close", new CloseCommand(fileService));
         commands.put("save", new SaveCommand(fileService, table));
-        commands.put("save as", new SaveAsCommand(fileService, table));
         commands.put("print", new PrintCommand(table, fileService));
         commands.put("edit", new EditCommand(table, fileService));
         commands.put("help", new HelpCommand(commands));
@@ -62,13 +62,6 @@ public class CommandLineController {
             String commandName = parts[0];
 
             /**
-             * Special handling for "save as" command
-             */
-            if (commandName.equals("save") && parts.length > 1 && parts[1].equals("as")) {
-                commandName = "save as";
-            }
-
-            /**
              * Finds the command by name
              */
             Command command = commands.get(commandName);
@@ -87,7 +80,13 @@ public class CommandLineController {
             /**
              * Executes the command
              */
-            command.execute();
+            try {
+                command.execute();
+            } catch (TableLoadException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage()); //програмата не спира, само извежда съобщение за грешка
+            }
         }
     }
 }
